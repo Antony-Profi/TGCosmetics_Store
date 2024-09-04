@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.types.input_file import FSInputFile
-from InlineKeyboardHelper.menu import create_menu, create_clinic_menu
+from InlineKeyboardHelper.menu import create_menu, create_clinic_menu, create_shop_menu
 
 
 router = Router()
@@ -52,6 +52,7 @@ async def show_image_and_description(message: Message):
 
 @router.message(F.text == "SHOP")
 async def shop(message: Message):
+    keyboard = create_shop_menu()
     await message.answer(
         "KRASOTA shop – сервис заботы высочайшего класса.\n\n"
         
@@ -59,7 +60,8 @@ async def shop(message: Message):
         "и настоящее удовольствие от шопинга.\n\n"
         
         "Более 130 брендов и 5000 товаров в одном месте, и все это для вас.\n"
-        "Двигайтесь по меню ниже, чтобы узнать больше 💖"
+        "Двигайтесь по меню ниже, чтобы узнать больше 💖",
+        reply_markup=keyboard
     )
 
     photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
@@ -77,3 +79,19 @@ async def back_to_main_menu(message: Message):
         "Главное меню",
         reply_markup=keyboard
     )
+
+
+@router.message(F.text == "BAR")
+async def bar(message: Message):
+    await message.answer(
+        "KRASOTA bar — живое и естественное продолжение концепта любви к себе, "
+        "который создали и уже более 15 лет лелеют две сестры — Анна и Вера.\n"
+        "Пространство гедонизма, свободы от стереотипов и предубеждения.\n\n"
+        
+        "Двигайтесь по меню ниже, чтобы узнать больше"
+    )
+    photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
+
+    photo = FSInputFile(photo_path)
+
+    await message.answer_photo(photo=photo)

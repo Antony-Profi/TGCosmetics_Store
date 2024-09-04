@@ -26,3 +26,16 @@ def create_clinic_menu():
         ]
     )
     return keyboard
+
+
+def create_shop_menu():
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📋About us"),
+             KeyboardButton(text="🛻Доставка и оплата")],
+            [KeyboardButton(text="📱Контакты"),
+             KeyboardButton(text="🛒За покупками")],
+            [KeyboardButton(text="🏠Главное меню")]
+        ]
+    )
+    return keyboard
