@@ -2,15 +2,20 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.types.input_file import FSInputFile
-from InlineKeyboardHelper.menu import create_menu, create_clinic_menu, create_shop_menu
+from helper.replyKeyboardHelper import \
+    getHomeReplyKeyboard as getHomeKeyboard, \
+    getClinicReplyKeyboard as getClinicButton, \
+    getShopReplyKeyboard as getShopButton, \
+    getBarReplyKeyboard as getBarButton, \
+    getOrderStatusReplyKeyboard as getOrderStatusButton
 
 
 router = Router()
 
 
 @router.message(CommandStart())
-async def gettingTheUsersFullName(message: Message):
-    keyboard = create_menu()
+async def command_start_handler(message: Message):
+    keyboard = getHomeKeyboard()
     photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
 
     photo = FSInputFile(photo_path)
@@ -27,8 +32,8 @@ async def gettingTheUsersFullName(message: Message):
 
 
 @router.message(F.text == "CLINIC")
-async def show_image_and_description(message: Message):
-    keyboard = create_clinic_menu()
+async def sendingInfoClinicButtonWithAnImage(message: Message):
+    keyboard = getClinicButton()
     try:
         await message.answer(
             "KRASOTA Clinic — место, где вы не только можете получить самые современные и эффективные услуги по уходу за кожей и волосами, "
@@ -51,8 +56,8 @@ async def show_image_and_description(message: Message):
 
 
 @router.message(F.text == "SHOP")
-async def shop(message: Message):
-    keyboard = create_shop_menu()
+async def sendingDescriptionAndImageAndUpdatingBottomKeyboard(message: Message):
+    keyboard = getShopButton()
     await message.answer(
         "KRASOTA shop – сервис заботы высочайшего класса.\n\n"
         
@@ -72,8 +77,8 @@ async def shop(message: Message):
 
 
 @router.message(F.text == "🏠Главное меню")
-async def back_to_main_menu(message: Message):
-    keyboard = create_menu()
+async def backToMainMenuAndUpdatedKeyboard(message: Message):
+    keyboard = getHomeKeyboard()
 
     await message.answer(
         "Главное меню",
@@ -82,16 +87,51 @@ async def back_to_main_menu(message: Message):
 
 
 @router.message(F.text == "BAR")
-async def bar(message: Message):
+async def sendingBarDescriptionsAndImagesAndTheCurrentKeyboard(message: Message):
+    keyboard = getBarButton()
+
     await message.answer(
         "KRASOTA bar — живое и естественное продолжение концепта любви к себе, "
         "который создали и уже более 15 лет лелеют две сестры — Анна и Вера.\n"
         "Пространство гедонизма, свободы от стереотипов и предубеждения.\n\n"
         
-        "Двигайтесь по меню ниже, чтобы узнать больше"
+        "Двигайтесь по меню ниже, чтобы узнать больше",
+        reply_markup=keyboard
     )
     photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
 
     photo = FSInputFile(photo_path)
 
     await message.answer_photo(photo=photo)
+
+
+@router.message(F.text == "Статус заказа")
+async def command_status_order(message: Message):
+    keyboard = getOrderStatusButton()
+
+    await message.answer(
+        "Выберите необходимый раздел 👇",
+        reply_markup=keyboard
+    )
+
+
+@router.message(F.text == "🛍️За покупками")
+async def commandForShoppingOnTheWebSite(message: Message):
+    WebSite = "https://krasotashop.com/ru"
+    await message.answer(
+        f"Для перехода в ONLINE SHOP нажмите <a href='{WebSite}'>сюда</a>",
+        parse_mode="HTML"
+    )
+
+
+@router.message(F.text == "📶Статус заказа")
+async def ask_for_phone_number(message: Message):
+    await message.answer(
+        "Вы хотите отправить свой номер телефона этому боту?"
+    )
+
+
+@router.message(F.contact)
+async def handle_phone_number(message: Message):
+    user_phone_number = message.contact.phone_number
+    await message.answer(f"Ваш номер телефона: {user_phone_number}. Спасибо!")
