@@ -13,6 +13,10 @@ from helper.replyKeyboardHelper import \
 router = Router()
 
 
+users_orders = {
+    "+380502752135": "Заказ #1: Ожидается доставка",
+    "+0987654321": "Заказ #2: Доставлен",
+}
 @router.message(CommandStart())
 async def command_start_handler(message: Message):
     keyboard = getHomeKeyboard()
@@ -134,4 +138,9 @@ async def ask_for_phone_number(message: Message):
 @router.message(F.contact)
 async def handle_phone_number(message: Message):
     user_phone_number = message.contact.phone_number
-    await message.answer(f"Ваш номер телефона: {user_phone_number}. Спасибо!")
+
+    if user_phone_number in users_orders:
+        order_status = users_orders[user_phone_number]
+        await message.answer(f"Ваш номер телефона: {user_phone_number}. Ваш статус заказа: {order_status}")
+    else:
+        await message.answer(f"Ваш номер телефона: {user_phone_number}. У вас нет активных заказов.")
