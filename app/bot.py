@@ -8,19 +8,16 @@ from helper.replyKeyboardHelper import \
     getShopReplyKeyboard as getShopButton, \
     getBarReplyKeyboard as getBarButton, \
     getOrderStatusReplyKeyboard as getOrderStatusButton
+from database import getOrderStatus
 
 
 router = Router()
 
 
-users_orders = {
-    "+380502752135": "Заказ #1: Ожидается доставка",
-    "+0987654321": "Заказ #2: Доставлен",
-}
 @router.message(CommandStart())
 async def command_start_handler(message: Message):
     keyboard = getHomeKeyboard()
-    photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
+    photo_path = "List_images/vodopad.jpeg"
 
     photo = FSInputFile(photo_path)
 
@@ -46,7 +43,7 @@ async def sendingInfoClinicButtonWithAnImage(message: Message):
             reply_markup=keyboard
         )
 
-        photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
+        photo_path = "List_images/vodopad.jpeg"
 
         photo = FSInputFile(photo_path)
 
@@ -73,7 +70,7 @@ async def sendingDescriptionAndImageAndUpdatingBottomKeyboard(message: Message):
         reply_markup=keyboard
     )
 
-    photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
+    photo_path = "List_images/vodopad.jpeg"
 
     photo = FSInputFile(photo_path)
 
@@ -102,7 +99,7 @@ async def sendingBarDescriptionsAndImagesAndTheCurrentKeyboard(message: Message)
         "Двигайтесь по меню ниже, чтобы узнать больше",
         reply_markup=keyboard
     )
-    photo_path = "C:/Users/User/Desktop/tgMarketPlace/vodopad.jpeg"
+    photo_path = "List_images/vodopad.jpeg"
 
     photo = FSInputFile(photo_path)
 
@@ -139,8 +136,16 @@ async def ask_for_phone_number(message: Message):
 async def handle_phone_number(message: Message):
     user_phone_number = message.contact.phone_number
 
-    if user_phone_number in users_orders:
-        order_status = users_orders[user_phone_number]
-        await message.answer(f"Ваш номер телефона: {user_phone_number}. Ваш статус заказа: {order_status}")
+    order_info = getOrderStatus(user_phone_number)
+
+    if order_info:
+        response = (
+            f"ID заказа: {order_info['id']}\n"
+            f"Имя пользователя: {order_info['username']}\n"
+            f"Название товара: {order_info['product_name']}\n"
+            f"Количество : {order_info['quantity']}\n"
+            f"Статус заказа: {order_info['status']}"
+        )
+        await message.answer(response)
     else:
-        await message.answer(f"Ваш номер телефона: {user_phone_number}. У вас нет активных заказов.")
+        await message.answer("У вас нет активных заказов.")

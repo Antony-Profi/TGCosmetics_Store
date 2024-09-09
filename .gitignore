@@ -2,4 +2,4 @@ venv/*
 __pycache__/
 .idea
 .env
-vodopad.jpeg
+List_images/vodopad.jpeg
