@@ -2,12 +2,13 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.types.input_file import FSInputFile
-from helper.replyKeyboardHelper import \
-    getHomeReplyKeyboard as getHomeKeyboard, \
-    getClinicReplyKeyboard as getClinicButton, \
-    getShopReplyKeyboard as getShopButton, \
-    getBarReplyKeyboard as getBarButton, \
+from helper.replyKeyboardHelper import (
+    getHomeReplyKeyboard as getHomeKeyboard,
+    getClinicReplyKeyboard as getClinicButton,
+    getShopReplyKeyboard as getShopButton,
+    getBarReplyKeyboard as getBarButton,
     getOrderStatusReplyKeyboard as getOrderStatusButton
+)
 from database import getOrderStatus
 
 

@@ -1,29 +1,50 @@
-import os
 import asyncio
 import logging
 
 from dotenv import load_dotenv
-from db.dbContext import createUserTableIfNotExsits
-from app.bot import router
+from db.dbContext import getConnection, createUserTableIfNotExists
+from pro.bot import router
 from aiogram import Bot, Dispatcher
+from app import app
+from multiprocessing import Process
+from os import environ
 
 
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=os.environ.get("TOKEN"))
+bot = Bot(token=environ.get("TOKEN"))
 dp = Dispatcher()
 
 
-async def main():
+async def startBot():
     dp.include_router(router)
-    createUserTableIfNotExsits()
+    conn = getConnection()
+    cur = conn.cursor()
+    createUserTableIfNotExists(conn, cur)
+    conn.close()
 
     await dp.start_polling(bot)
 
-    await bot.delete_webhook(drop_pending_updates=True)
+
+def startWebSite():
+    app.run(host="0.0.0.0", port=int(environ.get("WEB-SITE_PORT")))
+
+
+def main():
+    web_process = Process(target=startWebSite)
+    web_process.start()
+
+    asyncio.run(startBot())
+
+    web_process.join()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        main()
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        app.logger.error(f"An error occurred: {e}")

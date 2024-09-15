@@ -1,3 +1,4 @@
+import logging
 import psycopg2
 
 from os import environ
@@ -8,12 +9,20 @@ load_dotenv()
 
 
 def getConnection():
-    return psycopg2.connect(
-        environ["DATABASE_URL"]
-    )
+    try:
+        return psycopg2.connect(
+            host=environ["LOCALHOST"],
+            port=environ["DATABASE_PORT"],
+            dbname=environ["DATABASE_NAME"],
+            user=environ["USER"],
+            password=environ["PASSWORD"],
+        )
+    except psycopg2.Error as e:
+        logging.error(f"Error connecting to the database: {e}")
+        raise e
 
 
-def createUserTableIfNotExsits():
+def createUserTableIfNotExists(conn, cur):
     conn = getConnection()
     try:
         with conn.cursor() as curs:
@@ -41,7 +50,12 @@ def createUserTableIfNotExsits():
                 status VARCHAR(50),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )""")
+            cur.execute(
+                "INSERT INTO products (name, description, price) VALUES ('Product 1', 'Description 1', 10.99), ('Product 2', 'Description 2', 20.99) ON CONFLICT DO NOTHING")
 
         conn.commit()
+    except psycopg2.Error as e:
+        logging.error(f"Error creating tables: {e}")
+        raise e
     finally:
         conn.close()
