@@ -1,13 +1,14 @@
 import asyncio
 import logging
-
-from dotenv import load_dotenv
-from db.dbContext import getConnection, createUserTableIfNotExists
-from pro.bot import router
-from aiogram import Bot, Dispatcher
-from app import app
 from multiprocessing import Process
 from os import environ
+
+from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
+
+from app import app
+from db.dbContext import getConnection, createUserTableIfNotExists
+from pro.bot import router
 
 
 load_dotenv()
