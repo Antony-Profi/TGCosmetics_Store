@@ -10,13 +10,7 @@ load_dotenv()
 
 def getConnection():
     try:
-        return psycopg2.connect(
-            host=environ["LOCALHOST"],
-            port=environ["DATABASE_PORT"],
-            dbname=environ["DATABASE_NAME"],
-            user=environ["USER"],
-            password=environ["PASSWORD"],
-        )
+        return psycopg2.connect(environ["DATABASE_URL"], sslmode="require")
     except psycopg2.Error as e:
         logging.error(f"Error connecting to the database: {e}")
         raise e
